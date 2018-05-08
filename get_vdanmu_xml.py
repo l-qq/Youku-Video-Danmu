@@ -32,14 +32,16 @@ for i in results:
             titles = re.findall("<title>.*</title>", res)
             print(titles)
             title = titles[0][7:-36]
-            iids = re.findall(" videoId: \&#39;\d*\&", res)
+            iids = re.findall(" videoId:\"\d*\"", res)
             print(iids)
-            iid = iids[0][15:-1]
+            iid = iids[0][10:-1]
             #根据获取到的视频ID请求弹幕json
             filename = "./XML/" + title + ".xml"
             if os.path.exists(filename):
                 print("已经存在xml文件......Skipping......")
             else:
+                if '?' in filename:
+                    filename = filename.replace('?', '-')
                 with open(filename, "w", encoding='utf-8') as fout:
                     fout.write('<?xml version="1.0" encoding="UTF-8"?>\n')
                     fout.write('<i>\n')
@@ -84,7 +86,7 @@ for i in results:
                         print("\t\tjson-info//count:" + str(danmu["count"]) + "    filtered:" + str(danmu["filtered"]) + "    result:" + str(len(danmu["result"])))
                         for i in range(len(danmu["result"])):
                             illegal = False #标志是否有非法XML字符
-                            for char in ["<", ">", "&", "\u0000"]:
+                            for char in ["<", ">", "&", "\u0000", "\b"]:
                                 if char in danmu["result"][i]["content"]:
                                     illegal = True
                                     break
